@@ -6,8 +6,8 @@ env PROJ_HOME=<%= path %>
 
 even PLAY_HOME=<%= play_home %>
 
-env USER=<% user %>
-env GROUP=<% group %>
+env USER=<%= user %>
+env GROUP=<%= group %>
 
 start on (filesystem and net-device-up IFACE=lo) or runlevel [2345]
 stop on runlevel [!2345]
@@ -33,5 +33,5 @@ post-stop script
 end script
 
 script
-exec start-stop-daemon --start --exec $PLAY_HOME/play --chuid $USER:$GROUP -- start $PROJ_HOME  <% frameworkId %> <% javaOptions %>
+exec start-stop-daemon --start --exec $PLAY_HOME/play --chuid $USER:$GROUP -- start $PROJ_HOME  <%= frameworkId %> <%= javaOptions %>
 end script
