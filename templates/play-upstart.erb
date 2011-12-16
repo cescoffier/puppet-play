@@ -1,10 +1,13 @@
-description     "Start and Stop the <%= name %> website"
+#
+# Upstart script for <%= name %>
+#
+description     "Start and Stop the <%= name %> application"
 author          "Clement Escoffier <clement.escoffier@gmail.com>"
 version         "1.0"
 
 env PROJ_HOME=<%= path %>
 
-even PLAY_HOME=<%= play_home %>
+env PLAY_HOME=<%= play_home %>
 
 env USER=<%= user %>
 env GROUP=<%= group %>
@@ -17,11 +20,12 @@ respawn limit 10 5
 umask 022
 expect fork
 
+chdir <%= play_home %>
 
 pre-start script
         test -x $PLAY_HOME/play || { stop; exit 0; }
         test -c /dev/null || { stop; exit 0; }
-        chdir $PROJ_HOME
+        cd $PROJ_HOME
         rm $PROJ_HOME/server.pid || true
         $PLAY_HOME/play dependencies $PROJ_HOME
 end script
@@ -33,5 +37,6 @@ post-stop script
 end script
 
 script
+cd $PROJ_HOME
 exec start-stop-daemon --start --exec $PLAY_HOME/play --chuid $USER:$GROUP -- start $PROJ_HOME  <%= frameworkId %> <%= javaOptions %>
 end script
