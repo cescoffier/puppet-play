@@ -31,7 +31,6 @@ define play::service($path, $frameworkId = "", $javaOptions = "", $user = "root"
 	file { "/etc/init/$title.conf":
 		content => template("play/play-upstart.erb"),
 		mode    => "0755",
-		notify  => Service["play-$title"],
 	}
 	
 	#service { "play-$title":
