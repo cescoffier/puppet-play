@@ -22,23 +22,23 @@
 #	  require => [Jdk6["Java6SDK"], Play::Module["mongodb module"]]
 #   }
 #
-define play::service($path, $frameworkId = "", $javaOptions = "") {
+define play::service($path, $frameworkId = "", $javaOptions = "", $user = "root", $group = "root") {
 	include play
 	
 	# Make play_home accessible from the template
 	$play_home = $play::play_path
 	
-	file { "/etc/init.d/$title":
-		content => template("play/play-service.erb"),
+	file { "/etc/init/$title.conf":
+		content => template("play/play-upstart.erb"),
 		mode    => "0755",
 		notify  => Service["play-$title"],
 	}
 	
-	service { "play-$title":
-		 ensure  => true,
-	     enable  => true,
-		 name    => $title,
-		 require => File["/etc/init.d/${title}"]
-	}
+	#service { "play-$title":
+	#	 ensure  => true,
+	#     enable  => true,
+	#	 name    => $title,
+	#	 require => File["/etc/init.d/${title}"]
+	#}
 	
 }

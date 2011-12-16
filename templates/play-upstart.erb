@@ -1,0 +1,37 @@
+description     "Start and Stop the <%= name %> website"
+author          "Clement Escoffier <clement.escoffier@gmail.com>"
+version         "1.0"
+
+env PROJ_HOME=<%= path %>
+
+even PLAY_HOME=<%= play_home %>
+
+env USER=<% user &>
+env GROUP=<% group &>
+
+start on (filesystem and net-device-up IFACE=lo) or runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+respawn limit 10 5
+umask 022
+expect fork
+
+
+pre-start script
+        test -x $PLAY_HOME/play || { stop; exit 0; }
+        test -c /dev/null || { stop; exit 0; }
+        chdir $PROJ_HOME
+        rm $PROJ_HOME/server.pid || true
+        $PLAY_HOME/play dependencies $PROJ_HOME
+end script
+
+pre-stop exec $PLAY_HOME/play stop $PROJ_HOME
+
+post-stop script
+        rm ${PROJ_HOME}/server.pid || true
+end script
+
+script
+exec start-stop-daemon --start --exec $PLAY_HOME/play --chuid $USER:$GROUP -- start $PROJ_HOME  ${frameworkArgument} ${javaOptions}
+end script
