@@ -33,5 +33,5 @@ post-stop script
 end script
 
 script
-exec start-stop-daemon --start --exec $PLAY_HOME/play --chuid $USER:$GROUP -- start $PROJ_HOME  <% frameworkArgument %> <% javaOptions %>
+exec start-stop-daemon --start --exec $PLAY_HOME/play --chuid $USER:$GROUP -- start $PROJ_HOME  <% frameworkId %> <% javaOptions %>
 end script
