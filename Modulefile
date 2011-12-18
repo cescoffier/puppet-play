@@ -1,5 +1,5 @@
 name    'cescoffier-play'
-version '0.0.1'
+version '0.0.2'
 source 'akquinet'
 author 'Clement Escoffier - akquinet tech@spree Gmbh'
 license 'Apache Software License 2.0'
