@@ -38,10 +38,13 @@ Example
 		require => [Jdk6["Java6SDK"], Play::Module["mongodb module"]]
 	}
 	
+	#Just create the upstart script, so the service is required
 	play::service { "bilderverwaltung" :
 		path => "/home/clement/demo/bilderverwaltung",
-		require => [Jdk6["Java6SDK"], Play::Module["mongodb module"]]
+		require => [Play::Module["mongodb module"]]
 	}
+	
+	
 
 
 License
