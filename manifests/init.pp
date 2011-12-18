@@ -9,6 +9,9 @@
 #  play::application starts a play application
 #  play::service starts a play application as a system service
 #
+# Parameters:
+# *version* : the Play version to install
+#
 # Requires:
 # A proper java installation and JAVA_HOME set
 # Sample Usage:
@@ -28,9 +31,9 @@
 #	require => [Jdk6["Java6SDK"], Play::Module["mongodb module"]]
 #  }
 #
-class play {
+class play ($version = "1.2.3") {
 	
-	$play_version = "1.2.3"
+	$play_version = $version
 	$play_path = "/opt/play-${play_version}"
 	
 	notice("Installing Play ${play_version}")
