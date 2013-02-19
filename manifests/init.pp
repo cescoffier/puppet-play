@@ -63,10 +63,7 @@ class play ($version = "1.2.3") {
 		require => [Exec["unzip-play-framework"]]
 	}
 	
-	package {
-	    "unzip":
-	        ensure => installed
-	}
+	if !defined(Package['unzip']){ package{"unzip": ensure => installed} }
 	
 	package {
 	    "wget":
