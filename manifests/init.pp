@@ -35,10 +35,14 @@ class play ($version = "1.2.3") {
 	
 	$play_version = $version
 	$play_path = "/opt/play-${play_version}"
+	$download_url = $play_version ? {
+	  '2.1.0' => "http://downloads.typesafe.com/play/${play_version}/play-${play_version}.zip",
+	  default => "http://downloads.typesafe.com/releases/play-${play_version}.zip",
+	}
 	
 	notice("Installing Play ${play_version}")
 	exec { "download-play-framework":                                                                                                                     
-        command => "wget http://download.playframework.org/releases/play-${play_version}.zip",                                                         
+        command => "wget $download_url",                                                         
         cwd     => "/tmp",
         creates => "/tmp/play-${play_version}.zip",                                                              
 		unless  => "test -d $play_path",
