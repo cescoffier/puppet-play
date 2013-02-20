@@ -13,6 +13,7 @@
 # *version* : the Play version to install
 #
 # Requires:
+# wget puppet module https://github.com/EslamElHusseiny/puppet-wget
 # A proper java installation and JAVA_HOME set
 # Sample Usage:
 #  include play
@@ -32,24 +33,28 @@
 #  }
 #
 class play ($version = "1.2.3") {
-	
+
+	include wget
+
 	$play_version = $version
 	$play_path = "/opt/play-${play_version}"
+	$download_url = $play_version ? {
+	  '2.1.0' => "http://downloads.typesafe.com/play/${play_version}/play-${play_version}.zip",
+	  default => "http://downloads.typesafe.com/releases/play-${play_version}.zip",
+	}
 	
 	notice("Installing Play ${play_version}")
-	exec { "download-play-framework":                                                                                                                     
-        command => "wget http://download.playframework.org/releases/play-${play_version}.zip",                                                         
-        cwd     => "/tmp",
-        creates => "/tmp/play-${play_version}.zip",                                                              
-		unless  => "test -d $play_path",
-		require => [Package["wget"]]
-    }
+        wget::fetch{'download-play-framework':
+          source      => "$play_url",
+          destination => "/tmp/play-${play_version}.zip",
+          timeout     => 0,
+        }
 
 	exec {"unzip-play-framework":
 	    cwd     => "/opt",
         command => "/usr/bin/unzip /tmp/play-${play_version}.zip",
         unless  => "test -d $play_path",
-        require => [ Package["unzip"], Exec["download-play-framework"] ],
+        require => [ Package["unzip"], Wget::Fetch["download-play-framework"] ],
 	}
 	
 	file { "$play_path/play":
@@ -59,13 +64,5 @@ class play ($version = "1.2.3") {
 		require => [Exec["unzip-play-framework"]]
 	}
 	
-	package {
-	    "unzip":
-	        ensure => installed
-	}
-	
-	package {
-	    "wget":
-	        ensure => installed
-	}	
+	if !defined(Package['unzip']){ package{"unzip": ensure => installed} }	
 }
