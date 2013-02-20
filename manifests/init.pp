@@ -50,11 +50,16 @@ class play ($version = "1.2.3", $install_path = "/opt") {
           timeout     => 0,
         }
 
+    exec { "mkdir.play.install.path":
+        command => "/bin/mkdir -p ${install_path}",
+        unless  => "test -d ${install_path}"
+    }
+
 	exec {"unzip-play-framework":
 	    cwd     => "${install_path}",
         command => "/usr/bin/unzip /tmp/play-${play_version}.zip",
         unless  => "test -d $play_path",
-        require => [ Package["unzip"], Wget::Fetch["download-play-framework"] ],
+        require => [ Package["unzip"], Wget::Fetch["download-play-framework"], Exec["mkdir.play.install.path"] ],
 	}
 	
 	file { "$play_path/play":
@@ -67,7 +72,8 @@ class play ($version = "1.2.3", $install_path = "/opt") {
     # Add a unversioned symlink to the play installation.
     file { "${install_path}/play":
         ensure => link,
-        target => $play_path
+        target => $play_path,
+        require => Exec["mkdir.play.install.path", "unzip-play-framework"]
     }
 	
 	if !defined(Package['unzip']){ package{"unzip": ensure => installed} }	
