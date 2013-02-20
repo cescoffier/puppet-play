@@ -45,7 +45,7 @@ class play ($version = "1.2.3") {
 	
 	notice("Installing Play ${play_version}")
         wget::fetch{'download-play-framework':
-          source      => "$play_url",
+          source      => "$download_url",
           destination => "/tmp/play-${play_version}.zip",
           timeout     => 0,
         }
