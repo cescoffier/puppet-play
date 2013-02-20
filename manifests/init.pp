@@ -32,12 +32,12 @@
 #	require => [Jdk6["Java6SDK"], Play::Module["mongodb module"]]
 #  }
 #
-class play ($version = "1.2.3") {
+class play ($version = "1.2.3", $install_path = "/opt") {
 
 	include wget
 
 	$play_version = $version
-	$play_path = "/opt/play-${play_version}"
+	$play_path = "${install_path}/play-${play_version}"
 	$download_url = $play_version ? {
 	  '2.1.0' => "http://downloads.typesafe.com/play/${play_version}/play-${play_version}.zip",
 	  default => "http://downloads.typesafe.com/releases/play-${play_version}.zip",
@@ -51,7 +51,7 @@ class play ($version = "1.2.3") {
         }
 
 	exec {"unzip-play-framework":
-	    cwd     => "/opt",
+	    cwd     => "${install_path}",
         command => "/usr/bin/unzip /tmp/play-${play_version}.zip",
         unless  => "test -d $play_path",
         require => [ Package["unzip"], Wget::Fetch["download-play-framework"] ],
@@ -63,6 +63,12 @@ class play ($version = "1.2.3") {
 	    mode    => "0755",
 		require => [Exec["unzip-play-framework"]]
 	}
+
+    # Add a unversioned symlink to the play installation.
+    file { "${install_path}/play":
+        ensure => link,
+        target => $play_path
+    }
 	
 	if !defined(Package['unzip']){ package{"unzip": ensure => installed} }	
 }
