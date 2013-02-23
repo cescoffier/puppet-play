@@ -44,24 +44,30 @@ class play ($version = "1.2.3") {
 	}
 	
 	notice("Installing Play ${play_version}")
-        wget::fetch{'download-play-framework':
+        wget::fetch {'download-play-framework':
           source      => "$download_url",
           destination => "/tmp/play-${play_version}.zip",
           timeout     => 0,
         }
 
 	exec {"unzip-play-framework":
-	    cwd     => "/opt",
+	cwd     => "/opt",
         command => "/usr/bin/unzip /tmp/play-${play_version}.zip",
         unless  => "test -d $play_path",
         require => [ Package["unzip"], Wget::Fetch["download-play-framework"] ],
 	}
 	
 	file { "$play_path/play":
-		ensure  => file,
+	    ensure  => file,
 	    owner   => "root",
 	    mode    => "0755",
-		require => [Exec["unzip-play-framework"]]
+	    require => [Exec["unzip-play-framework"]]
+	}
+
+	file {'/usr/bin/play':
+	    ensure  => 'link',
+	    target  => "$play_path/play",
+	    require => File["$play_path/play"],
 	}
 	
 	if !defined(Package['unzip']){ package{"unzip": ensure => installed} }	
