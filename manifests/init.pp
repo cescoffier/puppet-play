@@ -44,7 +44,7 @@ class play ($version = "1.2.3", $install_path = "/opt") {
 	}
 	
 	notice("Installing Play ${play_version}")
-        wget::fetch{'download-play-framework':
+        wget::fetch {'download-play-framework':
           source      => "$download_url",
           destination => "/tmp/play-${play_version}.zip",
           timeout     => 0,
@@ -63,10 +63,16 @@ class play ($version = "1.2.3", $install_path = "/opt") {
 	}
 	
 	file { "$play_path/play":
-		ensure  => file,
+	    ensure  => file,
 	    owner   => "root",
 	    mode    => "0755",
-		require => [Exec["unzip-play-framework"]]
+	    require => [Exec["unzip-play-framework"]]
+	}
+
+	file {'/usr/bin/play':
+	    ensure  => 'link',
+	    target  => "$play_path/play",
+	    require => File["$play_path/play"],
 	}
 
     # Add a unversioned symlink to the play installation.
