@@ -20,7 +20,10 @@ The module requires a proper Java installation including a valid __JAVA_HOME_ en
 Example
 -------
 
-	include play
+	class {'play': 
+	   version => "2.1.4",
+	   user    => "appuser"
+    }
 	
 	play::module {"mongodb module" :
 	 	module => "mongo-1.3", 
