@@ -16,33 +16,36 @@
 # wget puppet module https://github.com/EslamElHusseiny/puppet-wget
 # A proper java installation and JAVA_HOME set
 # Sample Usage:
-#  include play
+#  class {'play': 
+#    version => "2.1.4",
+#    user    => "appuser"
+#  }
 #  play::module {"mongodb module" :
-# 	module  => "mongo-1.3", 
-#	require => [Class["play"], Class["mongodb"]]
+#   module  => "mongo-1.3", 
+# require => [Class["play"], Class["mongodb"]]
 #  }
 #
 #  play::module { "less module" :
-# 	module  => "less-0.3",
-#	require => Class["play"]
+#   module  => "less-0.3",
+# require => Class["play"]
 #  }
 #
 #  play::service { "bilderverwaltung" :
-#	path    => "/home/clement/demo/bilderverwaltung",
-#	require => [Jdk6["Java6SDK"], Play::Module["mongodb module"]]
+# path    => "/home/clement/demo/bilderverwaltung",
+# require => [Jdk6["Java6SDK"], Play::Module["mongodb module"]]
 #  }
 #
-class play ($play_version, $install_path = "/opt", $user= "root") {
+class play ($version, $install_path = "/opt", $user= "root") {
 
 include wget
 
-$play_path = "${install_path}/play-${play_version}"
-$download_url =	"http://downloads.typesafe.com/play/${play_version}/play-${play_version}.zip"
+$play_path = "${install_path}/play-${version}"
+$download_url = "http://downloads.typesafe.com/play/${version}/play-${version}.zip"
 
-notice("Installing Play ${play_version}")
+notice("Installing Play ${version}")
 wget::fetch {'download-play-framework':
   source      => "$download_url",
-  destination => "/tmp/play-${play_version}.zip",
+  destination => "/tmp/play-${version}.zip",
   timeout     => 0,
 }
 
@@ -53,14 +56,14 @@ exec { "mkdir.play.install.path":
 
 exec {"unzip-play-framework":
   cwd     => "${install_path}",
-  command => "/usr/bin/unzip /tmp/play-${play_version}.zip",
+  command => "/usr/bin/unzip /tmp/play-${version}.zip",
   unless  => "/usr/bin/test -d $play_path",
   require => [ Package["unzip"], Wget::Fetch["download-play-framework"], Exec["mkdir.play.install.path"] ],
 }
 
 exec { "change ownership of play installation":
   cwd      => "${install_path}",
-  command  => "/bin/chown -R ${user}: play-${play_version}",
+  command  => "/bin/chown -R ${user}: play-${version}",
   require  => Exec["unzip-play-framework"]
 
 }
