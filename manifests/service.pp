@@ -6,7 +6,7 @@
 #
 # == Parameters
 #
-# [*path*] 
+# [*path*]
 #  mandatory, absolute path of the application.
 #
 # [*frameworkId*]
@@ -32,13 +32,12 @@
 #
 define play::service($path, $frameworkId = "", $javaOptions = "", $user = "root", $group = "root") {
 	include play
-	
+
 	# Make play_home accessible from the template
 	$play_home = $play::play_path
-	
+
 	file { "/etc/init/$title.conf":
 		content => template("play/play-upstart.erb"),
 		mode    => "0755",
 	}
-
 }

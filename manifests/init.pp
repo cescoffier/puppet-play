@@ -16,12 +16,12 @@
 # wget puppet module https://github.com/EslamElHusseiny/puppet-wget
 # A proper java installation and JAVA_HOME set
 # Sample Usage:
-#  class {'play': 
+#  class {'play':
 #    version => "2.1.4",
 #    user    => "appuser"
 #  }
 #  play::module {"mongodb module" :
-#   module  => "mongo-1.3", 
+#   module  => "mongo-1.3",
 # require => [Class["play"], Class["mongodb"]]
 #  }
 #
@@ -65,7 +65,6 @@ exec { "change ownership of play installation":
   cwd      => "${install_path}",
   command  => "/bin/chown -R ${user}: play-${version}",
   require  => Exec["unzip-play-framework"]
-
 }
 
 file { "$play_path/play":

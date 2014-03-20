@@ -5,13 +5,13 @@
 #
 # == Parameters
 #
-# [*module*] 
+# [*module*]
 #  mandatory, the module name such as "less-0.3"
 #
 # == Examples
 #
 #  play::module {"mongodb module" :
-# 	module  => "mongo-1.3", 
+# 	module  => "mongo-1.3",
 #	require => [Class["play"], Class["mongodb"]]
 #  }
 #
@@ -23,8 +23,8 @@
 define play::module($module) {
 	include play
   	notice("Installing module ${module}")
-	exec { "install-play-module-${module}":                                                                                                                     
-      command => "yes | ${play::play_path}/play install ${module}", 
+	exec { "install-play-module-${module}":
+      command => "yes | ${play::play_path}/play install ${module}",
       unless  => "test -d ${play::play_path}/play/${module}"
   }
 }
