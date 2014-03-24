@@ -10,10 +10,13 @@
 #  mandatory, absolute path of the application.
 #
 # [*sync*]
-#  enable dependency sync before starting the application. Accepted values are true|false (false by default).
+#  enable dependency sync before starting the application.
+#  Accepted values are true|false (false by default).
 #
 # [*ensure*]
-#  checks that the application is running (stopped), starts (stopped) it if needed. Accepted value are running|stopped. (running by default)
+#  checks that the application is running (stopped),
+#  starts (stopped) it if needed. Accepted value are
+#  running|stopped. (running by default)
 #
 # [*frameworkId*]
 #  the framework id to start the application (no framework id by default)
@@ -51,16 +54,22 @@
 #     javaOptions => -Xx1024m
 #   }
 #
-define play::application($path, $sync = false, $ensure = running, $frameworkId = "", $javaOptions = "") {
+define play::application(
+  $path,
+  $sync        = false,
+  $ensure      = running,
+  $frameworkId = '',
+  $javaOptions = ''
+) {
   include play
 
-  $syncArgument = ""
+  $syncArgument = ''
   if $sync {
-    $syncArgument = "--sync"
+    $syncArgument = '--sync'
   }
 
-  $frameworkArgument = ""
-  if $frameworkId != "" {
+  $frameworkArgument = ''
+  if $frameworkId != '' {
     $frameworkArgument = "--%${frameworkId}"
   }
 
@@ -68,21 +77,21 @@ define play::application($path, $sync = false, $ensure = running, $frameworkId =
     notice("Running play application from ${path}")
     exec { "play-resolve-dependencies-${path}":
       command => "${play::play_path}/play dependencies ${syncArgument} ${path}",
-      cwd     => "${path}",
-      unless  => "test -f $path/server.pid",
+      cwd     => $path,
+      unless  => "test -f ${path}/server.pid",
     }
 
     exec { "start-play-application-${path}":
       command => "${play::play_path}/play start ${path} ${frameworkArgument} ${javaOptions}",
-      cwd     => "${path}",
-      unless  => "test -f $path/server.pid",
+      cwd     => $path,
+      unless  => "test -f ${path}/server.pid",
     }
   } else {
     notice("Stopping play application from ${path}")
     exec { "stop-play-application-${path}":
       command => "${play::play_path}/play stop ${path}",
-      cwd     => "${path}",
-      onlyif  => "test -f $path/server.pid",
+      cwd     => $path,
+      onlyif  => "test -f ${path}/server.pid",
     }
   }
 }
