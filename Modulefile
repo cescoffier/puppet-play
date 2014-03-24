@@ -24,4 +24,4 @@ description "Provision play framework and define play modules and applications a
 "
 
 ## Add dependencies, if any:
-# dependency 'username/name', '>= 1.2.0'
+dependency 'maestrodev/wget', '>= 1.0.0'
