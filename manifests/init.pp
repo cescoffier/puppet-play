@@ -46,7 +46,6 @@ class play (
   $play_path = "${install_path}/play-${version}"
   $download_url = "http://downloads.typesafe.com/play/${version}/play-${version}.zip"
 
-  notice("Installing Play ${version}")
   wget::fetch {'download-play-framework':
     source      => $download_url,
     destination => "/tmp/play-${version}.zip",
@@ -55,7 +54,7 @@ class play (
 
   exec { 'mkdir.play.install.path':
     command => "/bin/mkdir -p ${install_path}",
-    unless  => "/bin/bash [ -d ${install_path} ]"
+    unless  => "/usr/bin/test -d ${install_path}"
   }
 
   exec { 'unzip-play-framework':
@@ -72,6 +71,7 @@ class play (
   exec { 'change ownership of play installation':
     cwd     => $install_path,
     command => "/bin/chown -R ${user}: play-${version}",
+    onlyif  => "/bin/bash -c \"/usr/bin/test $(find ${install_path}/play-${version}/ ! -user ${user} | wc -l) -ne 0 \"",
     require => Exec['unzip-play-framework']
   }
 
