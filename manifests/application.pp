@@ -24,29 +24,29 @@
 # == Examples
 #
 #   play::application { "bilderverwaltung" :
-#	  path    => "/home/clement/demo/bilderverwaltung",
+#     path    => "/home/clement/demo/bilderverwaltung",
 #     require => [Jdk6["Java6SDK"], Play::Module["mongodb module"]]
 #   }
 #
 #   play::application { "bilderverwaltung" :
 #     ensure  => running,
-#	  path    => "/home/clement/demo/bilderverwaltung",
+#     path    => "/home/clement/demo/bilderverwaltung",
 #   }
 #
 #   play::application { "bilderverwaltung" :
 #     ensure  => stopped,
-#	  path    => "/home/clement/demo/bilderverwaltung",
+#     path    => "/home/clement/demo/bilderverwaltung",
 #   }
 #
 #   play::application { "bilderverwaltung" :
 #     ensure  => running,
 #     sync    => true,
-#	  path    => "/home/clement/demo/bilderverwaltung",
+#     path    => "/home/clement/demo/bilderverwaltung",
 #   }
 #
 #   play::application { "bilderverwaltung" :
-#     ensure  => running,
-#	  path    => "/home/clement/demo/bilderverwaltung",
+#     ensure      => running,
+#     path        => "/home/clement/demo/bilderverwaltung",
 #     frameworkId => "prod",
 #     javaOptions => -Xx1024m
 #   }
@@ -56,33 +56,33 @@ define play::application($path, $sync = false, $ensure = running, $frameworkId =
 
   $syncArgument = ""
   if $sync {
-   	$syncArgument = "--sync"
+    $syncArgument = "--sync"
   }
 
   $frameworkArgument = ""
   if $frameworkId != "" {
-	$frameworkArgument = "--%${frameworkId}"
+    $frameworkArgument = "--%${frameworkId}"
   }
 
   if $ensure == running {
-	  notice("Running play application from ${path}")
-	  exec { "play-resolve-dependencies-${path}":
-	      command => "${play::play_path}/play dependencies ${syncArgument} ${path}",
-	      cwd     => "${path}",
-	      unless  => "test -f $path/server.pid",
-	  }
+    notice("Running play application from ${path}")
+    exec { "play-resolve-dependencies-${path}":
+      command => "${play::play_path}/play dependencies ${syncArgument} ${path}",
+      cwd     => "${path}",
+      unless  => "test -f $path/server.pid",
+    }
 
-	  exec { "start-play-application-${path}":
-	      command => "${play::play_path}/play start ${path} ${frameworkArgument} ${javaOptions}",
-	      cwd     => "${path}",
-	      unless  => "test -f $path/server.pid",
-	  }
-	} else {
-		notice("Stopping play application from ${path}")
-		exec { "stop-play-application-${path}":
-	      command => "${play::play_path}/play stop ${path}",
-	      cwd     => "${path}",
-	      onlyif  => "test -f $path/server.pid",
-	  }
-	}	
+    exec { "start-play-application-${path}":
+      command => "${play::play_path}/play start ${path} ${frameworkArgument} ${javaOptions}",
+      cwd     => "${path}",
+      unless  => "test -f $path/server.pid",
+    }
+  } else {
+    notice("Stopping play application from ${path}")
+    exec { "stop-play-application-${path}":
+      command => "${play::play_path}/play stop ${path}",
+      cwd     => "${path}",
+      onlyif  => "test -f $path/server.pid",
+    }
+  }
 }

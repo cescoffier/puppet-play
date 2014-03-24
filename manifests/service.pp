@@ -24,20 +24,20 @@
 # == Examples
 #
 #   play::service { "bilderverwaltung" :
-#	  path => "/home/clement/demo/bilderverwaltung",
+#     path => "/home/clement/demo/bilderverwaltung",
 #     group => "bilderverwaltung"
 #     user => "bilderverwaltung"
-#	  require => [Play::Module["mongodb module"]]
+#     require => [Play::Module["mongodb module"]]
 #   }
 #
 define play::service($path, $frameworkId = "", $javaOptions = "", $user = "root", $group = "root") {
-	include play
+  include play
 
-	# Make play_home accessible from the template
-	$play_home = $play::play_path
+  # Make play_home accessible from the template
+  $play_home = $play::play_path
 
-	file { "/etc/init/$title.conf":
-		content => template("play/play-upstart.erb"),
-		mode    => "0755",
-	}
+  file { "/etc/init/$title.conf":
+    content => template("play/play-upstart.erb"),
+    mode    => "0755",
+  }
 }
